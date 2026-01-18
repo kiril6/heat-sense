@@ -1,0 +1,313 @@
+<div class="gauge-wrapper">
+  <div *ngIf="selectable && !isInactive" class="gauge-checkbox">
+    <label class="checkbox">
+      <input 
+        type="checkbox" 
+        [checked]="isSelected"
+        (change)="onSelectionChange($event)"
+        [attr.aria-label]="'Select ' + label + ' gauge for favorites'"
+        [attr.aria-checked]="isSelected">
+      <span class="checkbox-label">Select for main view</span>
+    </label>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p class="has-text-centered has-text-grey">Loading temperature data...</p>
+  </div>
+
+  <div *ngIf="error && !loading" class="notification is-danger is-light">
+    <strong>Error:</strong> {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error" class="gauge-content" [class.inactive-gauge]="isInactive" [class.refreshing]="refreshing" [class.temperature-alert]="hasTemperatureAlert">
+    <div class="gauge-header">
+      <div *ngIf="showActionButtons && !isExpanded" class="action-button-left">
+        <button 
+          class="button is-small is-ghost remove-gauge-button"
+          (click)="onRemoveFromFavorites()"
+          [attr.aria-label]="'Remove ' + label + ' from favorites'"
+          title="Remove from favorites">
+          <span class="icon is-small">
+            <i class="fas fa-star"></i>
+          </span>
+        </button>
+      </div>
+      <div *ngIf="showActionButtons" class="action-button-right">
+        <button 
+          class="button is-small is-ghost expand-button"
+          (click)="onToggleExpand()"
+          [attr.aria-label]="isExpanded ? 'Exit fullscreen for ' + label : 'Expand ' + label + ' to fullscreen'"
+          [title]="isExpanded ? 'Exit fullscreen (ESC)' : 'Expand to fullscreen'">
+          <span class="icon is-small">
+            <i class="fas" [ngClass]="isExpanded ? 'fa-compress' : 'fa-expand'"></i>
+          </span>
+        </button>
+      </div>
+      
+      <div *ngIf="showReorder && !isExpanded" class="reorder-controls">
+        <button 
+          class="button is-small is-light" 
+          (click)="onMoveLeft()"
+          [disabled]="!canMoveLeft"
+          [attr.aria-label]="'Move ' + label + ' left'"
+          title="Move left">
+          <span class="icon is-small">
+            <i class="fas fa-chevron-left"></i>
+          </span>
+        </button>
+        <button 
+          class="button is-small is-light" 
+          (click)="onMoveRight()"
+          [disabled]="!canMoveRight"
+          [attr.aria-label]="'Move ' + label + ' right'"
+          title="Move right">
+          <span class="icon is-small">
+            <i class="fas fa-chevron-right"></i>
+          </span>
+        </button>
+      </div>
+      
+      <h3 class="title is-5 has-text-centered" *ngIf="label">
+        {{ label }}
+      </h3>
+      
+      <div *ngIf="refreshing" class="notification is-info is-light refreshing-notification">
+        <span class="icon is-small">
+          <i class="fas fa-sync-alt fa-spin"></i>
+        </span>
+        <span>
+          <strong>Refreshing...</strong>
+        </span>
+      </div>
+      
+      <div *ngIf="isInactive" class="notification is-warning is-light inactive-status">
+        <span class="icon is-small">
+          <i class="fas fa-exclamation-triangle"></i>
+        </span>
+        <span>
+          <strong>Offline</strong>
+        </span>
+      </div>
+      
+      <div class="gauge-controls">
+        <button 
+          class="button is-small is-light" 
+          (click)="toggleUnit()"
+          title="Toggle temperature unit"
+          [attr.aria-label]="'Switch to ' + (unit === 'celsius' ? 'Fahrenheit' : 'Celsius')">
+          <span class="icon is-small">
+            <i class="fas fa-thermometer-half"></i>
+          </span>
+          <span>{{ tempUnit }}</span>
+        </button>
+        
+        <button 
+          class="button is-small is-light" 
+          (click)="toggleTheme()"
+          title="Toggle dark mode"
+          [attr.aria-label]="'Switch to ' + (isDarkMode ? 'light' : 'dark') + ' mode'">
+          <span class="icon is-small">
+            <i class="fas" [ngClass]="isDarkMode ? 'fa-sun' : 'fa-moon'"></i>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <div class="gauge-svg-container">
+      <svg
+        class="temperature-gauge"
+        width="240"
+        height="240"
+        viewBox="0 -50 240 290"
+        aria-label="Temperature gauge">
+        <defs>
+          <linearGradient id="coldGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#4A90E2;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#7EC8E3;stop-opacity:1" />
+          </linearGradient>
+          <linearGradient id="coolGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#7EC8E3;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#50C878;stop-opacity:1" />
+          </linearGradient>
+          <linearGradient id="warmGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#50C878;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#FFB347;stop-opacity:1" />
+          </linearGradient>
+          <linearGradient id="hotGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#FFB347;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#FF6B6B;stop-opacity:1" />
+          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <circle
+          cx="120"
+          cy="120"
+          r="100"
+          fill="none"
+          stroke="#f0f0f0"
+          stroke-width="1"
+          class="gauge-outer-ring"
+        />
+
+        <circle
+          cx="120"
+          cy="120"
+          r="90"
+          fill="white"
+          class="gauge-background"
+        />
+
+        <path
+          d="M 49.3 49.3 A 100 100 0 0 1 97.3 20.7"
+          fill="none"
+          stroke="url(#coldGradient)"
+          stroke-width="12"
+          stroke-linecap="round"
+          class="temp-zone temp-zone-cold"
+        />
+
+        <path
+          d="M 97.3 20.7 A 100 100 0 0 1 142.7 20.7"
+          fill="none"
+          stroke="url(#coolGradient)"
+          stroke-width="12"
+          stroke-linecap="round"
+          class="temp-zone temp-zone-cool"
+        />
+
+        <path
+          d="M 142.7 20.7 A 100 100 0 0 1 190.7 49.3"
+          fill="none"
+          stroke="url(#warmGradient)"
+          stroke-width="12"
+          stroke-linecap="round"
+          class="temp-zone temp-zone-warm"
+        />
+
+        <defs>
+          <path id="coldPath" d="M 30 20 Q 50 15, 70 20" />
+          <path id="midPath" d="M 100 -2 Q 120 -4, 140 -2" />
+          <path id="hotPath" d="M 170 20 Q 190 15, 210 20" />
+        </defs>
+
+        <g class="temperature-markers">
+          <line x1="49.3" y1="49.3" x2="63" y2="63" stroke="#4A90E2" stroke-width="2" stroke-linecap="round" class="marker-tick"/>
+          <text class="marker-label" fill="#4A90E2" font-weight="900" transform="rotate(-35 50 20)">
+            <textPath href="#coldPath" startOffset="50%" text-anchor="middle">
+              COLD
+            </textPath>
+          </text>
+          
+          <line x1="120" y1="20" x2="120" y2="35" stroke="#50C878" stroke-width="2" stroke-linecap="round" class="marker-tick"/>
+          <text class="marker-label" fill="#50C878" font-weight="900">
+            <textPath href="#midPath" startOffset="50%" text-anchor="middle">
+              MID
+            </textPath>
+          </text>
+          
+          <line x1="190.7" y1="49.3" x2="177" y2="63" stroke="#FF6B6B" stroke-width="2" stroke-linecap="round" class="marker-tick"/>
+          <text class="marker-label" fill="#FF6B6B" font-weight="900" transform="rotate(45 190 20)">
+            <textPath href="#hotPath" startOffset="50%" text-anchor="middle">
+              HOT
+            </textPath>
+          </text>
+        </g>
+
+        <g class="needle-group" [attr.transform]="'rotate(' + needleAngle + ' 120 120)'">
+          <line
+            class="gauge-needle"
+            x1="120"
+            y1="120"
+            x2="120"
+            y2="30"
+            stroke="#2c3e50"
+            stroke-width="5"
+            stroke-linecap="round"
+          />
+        </g>
+
+        <circle
+          cx="120"
+          cy="120"
+          r="12"
+          fill="#2c3e50"
+          class="gauge-center"
+        />
+
+        <circle
+          cx="120"
+          cy="120"
+          r="6"
+          fill="white"
+          class="gauge-center-inner"
+        />
+      </svg>
+    </div>
+
+    <p class="temperature-display has-text-centered">
+      <strong *ngIf="!isInactive" [class.temp-alert-blink]="hasTemperatureAlert">{{ displayTemp }}{{ tempUnit }}</strong>
+      <strong *ngIf="isInactive">--{{ tempUnit }}</strong>
+    </p>
+
+    <p class="temperature-range has-text-centered has-text-grey is-size-7">
+      <span class="icon is-small range-icon">
+        <i class="fas fa-arrows-alt-v"></i>
+      </span>
+      <span *ngIf="!isInactive">Range: {{ displayMinTemp }}{{ tempUnit }} - {{ displayMaxTemp }}{{ tempUnit }}</span>
+      <span *ngIf="isInactive">Range: --{{ tempUnit }} - --{{ tempUnit }}</span>
+    </p>
+
+    <p class="humidity-display has-text-centered has-text-grey is-size-7" *ngIf="humidity !== undefined">
+      <span class="icon is-small">
+        <i class="fas fa-tint"></i>
+      </span>
+      <span *ngIf="!isInactive">Humidity: {{ humidity }}%</span>
+      <span *ngIf="isInactive">Humidity: --%</span>
+      <span *ngIf="!isInactive" class="icon is-small ml-2 humidity-icon" [ngClass]="humidityLevelClass">
+        <i class="fas" [ngClass]="humidityIcon"></i>
+      </span>
+    </p>
+
+    <p class="last-updated has-text-centered has-text-grey is-size-7" *ngIf="lastUpdated">
+      <span class="icon is-small">
+        <i class="fas fa-clock"></i>
+      </span>
+      <span 
+        class="last-updated-text" 
+        [class.outdated]="isDataOutdated"
+        [class.clickable]="isDataOutdated && !refreshing"
+        [title]="isDataOutdated ? 'Click to refresh data - ' + formattedLastUpdated : formattedLastUpdated"
+        [attr.aria-label]="'Last updated: ' + formattedLastUpdated"
+        (click)="refreshOutdatedData()">
+        {{ relativeTime }}
+      </span>
+      <span *ngIf="isDataOutdated && !refreshing" class="icon is-small has-text-warning ml-1">
+        <i class="fas fa-exclamation-circle" title="Data is outdated (>15 min)"></i>
+      </span>
+      <span *ngIf="refreshing" class="icon is-small has-text-info ml-1">
+        <i class="fas fa-sync-alt fa-spin"></i>
+      </span>
+    </p>
+
+    <div class="has-text-centered mt-4" *ngIf="dataSource !== 'none'">
+      <button 
+        class="button is-small is-light" 
+        (click)="refresh()"
+        [attr.aria-label]="'Refresh ' + label + ' temperature data'"
+        title="Refresh temperature data">
+        <span class="icon is-small">
+          <i class="fas fa-sync-alt"></i>
+        </span>
+        <span>Refresh</span>
+      </button>
+    </div>
+  </div>
+</div>

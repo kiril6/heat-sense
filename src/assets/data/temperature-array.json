@@ -1,0 +1,23 @@
+[
+  {
+    "id": "gauge-1",
+    "label": "Living Room",
+    "minTemp": 10,
+    "maxTemp": 30,
+    "currentTemp": 22
+  },
+  {
+    "id": "gauge-2",
+    "label": "Bedroom",
+    "minTemp": 15,
+    "maxTemp": 28,
+    "currentTemp": 20
+  },
+  {
+    "id": "gauge-3",
+    "label": "Kitchen",
+    "minTemp": 12,
+    "maxTemp": 32,
+    "currentTemp": 24
+  }
+]

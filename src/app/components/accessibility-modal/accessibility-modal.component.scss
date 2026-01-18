@@ -1,0 +1,271 @@
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #363636;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  i {
+    color: #3273dc;
+  }
+}
+
+.close-button {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    background-color: #f5f5f5;
+    color: #363636;
+  }
+
+  &:focus {
+    outline: 2px solid #3273dc;
+    outline-offset: 2px;
+  }
+}
+
+.modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+}
+
+.setting-info {
+  flex: 1;
+}
+
+.setting-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #363636;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+  cursor: pointer;
+
+  i {
+    color: #3273dc;
+  }
+}
+
+.setting-description {
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+  flex-shrink: 0;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .slider {
+      background-color: #3273dc;
+    }
+
+    &:checked + .slider:before {
+      transform: translateX(24px);
+    }
+
+    &:focus + .slider {
+      box-shadow: 0 0 0 2px rgba(50, 115, 220, 0.3);
+    }
+  }
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 26px;
+
+  &:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+  }
+}
+
+// Dark theme support
+:host-context(html[data-theme='dark']) {
+  .modal-content {
+    background: #2b2b2b;
+  }
+
+  .modal-header {
+    border-bottom-color: #444;
+  }
+
+  .modal-title {
+    color: #f5f5f5;
+  }
+
+  .close-button {
+    color: #999;
+
+    &:hover {
+      background-color: #444;
+      color: #f5f5f5;
+    }
+  }
+
+  .setting-item {
+    background-color: #333;
+
+    &:hover {
+      background-color: #3a3a3a;
+    }
+  }
+
+  .setting-label {
+    color: #f5f5f5;
+  }
+
+  .setting-description {
+    color: #999;
+  }
+}
+
+// High contrast mode
+:host-context(html.high-contrast) {
+  .modal-content {
+    border: 3px solid #000;
+  }
+
+  .modal-title,
+  .setting-label {
+    color: #000;
+    font-weight: 700;
+  }
+
+  .setting-description {
+    color: #333;
+    font-weight: 500;
+  }
+
+  .slider {
+    background-color: #000;
+    border: 2px solid #000;
+
+    &:before {
+      background-color: #fff;
+      border: 2px solid #000;
+    }
+  }
+
+  input:checked + .slider {
+    background-color: #0066cc;
+  }
+}
+
+// Reduced motion
+:host-context(html.reduced-motion) {
+  .modal-backdrop,
+  .modal-content {
+    animation: none;
+  }
+
+  .slider,
+  .slider:before,
+  .setting-item,
+  .close-button {
+    transition: none;
+  }
+}

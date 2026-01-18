@@ -1,0 +1,143 @@
+// Light Theme Variables
+:root {
+  // Primary Colors
+  --color-primary: #3273dc;
+  --color-primary-hover: #5a9fd4;
+  --color-error: #f14668;
+  --color-error-light: #ff6b8a;
+  --color-warning: #ff9800;
+  --color-warning-dark: #f57c00;
+  --color-success: #50C878;
+  
+  // Background Colors
+  --color-bg-base: #ffffff;
+  --color-bg-light: #f5f5f5;
+  --color-bg-header: rgb(239, 239, 239);
+  --color-bg-header-scrolled: rgba(216, 216, 216, 0.8);
+  --color-bg-gauge: #f5f5f5;
+  --color-bg-modal: rgba(0, 0, 0, 0.85);
+  --color-bg-scroll-btn: rgba(216, 216, 216, 0.8);
+  --color-bg-scroll-btn-hover: rgba(200, 200, 200, 0.9);
+  
+  // SVG/Gauge Colors
+  --color-gauge-background: #ffffff;
+  --color-gauge-outer-ring: #e0e0e0;
+  --color-gauge-center: #363636;
+  --color-gauge-center-inner: #ffffff;
+  --color-gauge-needle: #2c3e50;
+  --color-gauge-needle-hover: #1a252f;
+  
+  // Text Colors
+  --color-text-base: #363636;
+  --color-text-secondary: #666666;
+  --color-text-muted: #b0b0b0;
+  --color-text-light: #f5f5f5;
+  
+  // Border Colors
+  --color-border-base: #dbdbdb;
+  --color-border-header: rgba(219, 219, 219, 0.3);
+  --color-border-scroll-btn: rgba(255, 255, 255, 0.6);
+  --color-border-scroll-btn-hover: rgba(255, 255, 255, 0.8);
+  
+  // Humidity Colors
+  --color-humidity-low: #FFB347;
+  --color-humidity-optimal: #50C878;
+  --color-humidity-high: #7EC8E3;
+  
+  // Status Colors
+  --color-status-outdated: #ff9800;
+  --color-status-inactive: rgba(255, 221, 87, 0.15);
+  --color-status-inactive-text: #856404;
+  --color-status-inactive-border: rgba(255, 221, 87, 0.3);
+  
+  // Reorder Button Colors
+  --color-reorder-hover: #e8e8e8;
+  
+  // Button Colors
+  --color-button-light-bg: #f5f5f5;
+  --color-button-light-text: #363636;
+  --color-button-light-border: #dbdbdb;
+  --color-button-light-hover-bg: #eeeeee;
+  
+  // Spinner Colors
+  --color-spinner-base: #f5f5f5;
+  --color-spinner-accent: var(--color-primary);
+  
+  // Shadow Colors
+  --shadow-base: rgba(0, 0, 0, 0.1);
+  --shadow-medium: rgba(0, 0, 0, 0.15);
+  --shadow-large: rgba(0, 0, 0, 0.3);
+  --shadow-error: rgba(241, 70, 104, 0.3);
+}
+
+// Dark Theme Variables
+html[data-theme='dark'] {
+  // Primary Colors (keep same for consistency)
+  --color-primary: #3273dc;
+  --color-primary-hover: #5a9fd4;
+  --color-error: #f14668;
+  --color-error-light: #ff6b8a;
+  --color-warning: #ff9800;
+  --color-warning-dark: #f57c00;
+  --color-success: #50C878;
+  
+  // Background Colors
+  --color-bg-base: #1a1a1a;
+  --color-bg-light: #2a2a2a;
+  --color-bg-header: rgb(26, 26, 26);
+  --color-bg-header-scrolled: rgba(26, 26, 26, 0.8);
+  --color-bg-gauge: #2a2a2a;
+  --color-bg-modal: rgba(0, 0, 0, 0.85);
+  --color-bg-scroll-btn: rgba(26, 26, 26, 0.8);
+  --color-bg-scroll-btn-hover: rgba(40, 40, 40, 0.9);
+  
+  // SVG/Gauge Colors
+  --color-gauge-background: #1a1a1a;
+  --color-gauge-outer-ring: #404040;
+  --color-gauge-center: #e0e0e0;
+  --color-gauge-center-inner: #1a1a1a;
+  --color-gauge-needle: #e0e0e0;
+  --color-gauge-needle-hover: #f5f5f5;
+  
+  // Text Colors
+  --color-text-base: #f5f5f5;
+  --color-text-secondary: #b0b0b0;
+  --color-text-muted: #808080;
+  --color-text-light: #e0e0e0;
+  
+  // Border Colors
+  --color-border-base: #404040;
+  --color-border-header: rgba(64, 64, 64, 0.3);
+  --color-border-scroll-btn: rgba(255, 255, 255, 0.3);
+  --color-border-scroll-btn-hover: rgba(255, 255, 255, 0.5);
+  
+  // Humidity Colors (same for consistency)
+  --color-humidity-low: #FFB347;
+  --color-humidity-optimal: #50C878;
+  --color-humidity-high: #7EC8E3;
+  
+  // Status Colors
+  --color-status-outdated: #ff9800;
+  --color-status-inactive: rgba(255, 221, 87, 0.25);
+  --color-status-inactive-text: #ffd700;
+  --color-status-inactive-border: rgba(255, 221, 87, 0.5);
+  
+  // Reorder Button Colors
+  --color-reorder-hover: #3a3a3a;
+  
+  // Button Colors
+  --color-button-light-bg: #2a2a2a;
+  --color-button-light-text: #e0e0e0;
+  --color-button-light-border: #404040;
+  --color-button-light-hover-bg: #363636;
+  
+  // Spinner Colors
+  --color-spinner-base: #404040;
+  --color-spinner-accent: var(--color-primary);
+  
+  // Shadow Colors
+  --shadow-base: rgba(0, 0, 0, 0.3);
+  --shadow-medium: rgba(0, 0, 0, 0.4);
+  --shadow-large: rgba(0, 0, 0, 0.6);
+  --shadow-error: rgba(241, 70, 104, 0.4);
+}

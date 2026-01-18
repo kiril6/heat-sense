@@ -1,0 +1,52 @@
+[
+  {
+    "id": "gauge-1",
+    "label": "Living Room",
+    "minTemp": 10,
+    "maxTemp": 30,
+    "currentTemp": 32,
+    "humidity": 25,
+    "status": "active",
+    "lastUpdated": "2026-01-13T18:30:00Z"
+  },
+  {
+    "id": "gauge-2",
+    "label": "Bedroom",
+    "minTemp": 10,
+    "maxTemp": 30,
+    "currentTemp": 20,
+    "humidity": 45,
+    "status": "active",
+    "lastUpdated": "2026-01-13T18:10:00Z"
+  },
+  {
+    "id": "gauge-3",
+    "label": "Kitchen",
+    "minTemp": 10,
+    "maxTemp": 30,
+    "currentTemp": 24,
+    "humidity": 70,
+    "status": "active",
+    "lastUpdated": "2026-01-13T18:30:00Z"
+  },
+  {
+    "id": "gauge-4",
+    "label": "Rest Room",
+    "minTemp": 10,
+    "maxTemp": 30,
+    "currentTemp": 18,
+    "humidity": 55,
+    "status": "inactive",
+    "lastUpdated": "2026-01-13T16:24:00Z"
+  },
+  {
+    "id": "gauge-5",
+    "label": "Office",
+    "minTemp": 10,
+    "maxTemp": 30,
+    "currentTemp": 23,
+    "humidity": 40,
+    "status": "active",
+    "lastUpdated": "2026-01-13T17:50:00Z"
+  }
+]

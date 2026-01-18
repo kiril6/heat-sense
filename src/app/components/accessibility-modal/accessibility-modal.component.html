@@ -1,0 +1,60 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+  <div class="modal-content" role="dialog" aria-labelledby="accessibility-title" aria-modal="true">
+    <div class="modal-header">
+      <h2 id="accessibility-title" class="modal-title">
+        <i class="fas fa-universal-access"></i>
+        Accessibility Settings
+      </h2>
+      <button 
+        class="close-button" 
+        (click)="onClose()"
+        aria-label="Close accessibility settings">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="setting-item">
+        <div class="setting-info">
+          <label for="high-contrast-toggle" class="setting-label">
+            <i class="fas fa-adjust"></i>
+            High Contrast Mode
+          </label>
+          <p class="setting-description">
+            Increases contrast for better visibility
+          </p>
+        </div>
+        <label class="toggle-switch">
+          <input 
+            type="checkbox" 
+            id="high-contrast-toggle"
+            [checked]="highContrastMode"
+            (change)="toggleHighContrast()"
+            aria-label="Toggle high contrast mode">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-info">
+          <label for="reduced-motion-toggle" class="setting-label">
+            <i class="fas fa-running"></i>
+            Reduced Motion
+          </label>
+          <p class="setting-description">
+            Minimizes animations and transitions
+          </p>
+        </div>
+        <label class="toggle-switch">
+          <input 
+            type="checkbox" 
+            id="reduced-motion-toggle"
+            [checked]="reducedMotion"
+            (change)="toggleReducedMotion()"
+            aria-label="Toggle reduced motion">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>

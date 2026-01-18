@@ -1,0 +1,139 @@
+.toast-container {
+  position: fixed;
+  bottom: 2rem;
+  left: 1.5rem;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  pointer-events: none;
+  
+  @media (max-width: 768px) {
+    left: 1rem;
+    right: 1rem;
+    bottom: 1.5rem;
+  }
+}
+
+.toast {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 350px;
+  height: 60px;
+  pointer-events: auto;
+  border-left: 4px solid;
+  transition: all 0.3s ease;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  animation: slideInFromLeft 0.3s ease-out;
+  display: flex;
+  
+  @media (max-width: 768px) {
+    width: calc(100vw - 2rem);
+    max-width: 350px;
+  }
+  
+  &:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  padding-left: 1rem;
+  padding-right: 0.5rem;
+}
+
+.toast-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.toast-message {
+  flex: 1;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #363636;
+}
+
+.toast-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  color: #666;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+  
+  &:hover {
+    color: #333;
+  }
+}
+
+.toast-success {
+  border-left-color: #50C878;
+  
+  .toast-icon {
+    color: #50C878;
+  }
+}
+
+.toast-error {
+  border-left-color: #f14668;
+  
+  .toast-icon {
+    color: #f14668;
+  }
+}
+
+.toast-warning {
+  border-left-color: #ff9800;
+  
+  .toast-icon {
+    color: #ff9800;
+  }
+}
+
+.toast-info {
+  border-left-color: #3273dc;
+  
+  .toast-icon {
+    color: #3273dc;
+  }
+}
+
+:host-context(html[data-theme='dark']) {
+  .toast {
+    background: #2a2a2a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+  
+  .toast-message {
+    color: #e0e0e0;
+  }
+  
+  .toast-close {
+    color: #b0b0b0;
+    
+    &:hover {
+      color: #e0e0e0;
+    }
+  }
+}

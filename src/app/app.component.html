@@ -1,0 +1,377 @@
+<header class="app-header" [class.scrolled]="isScrolled">
+  <div class="container">
+    <div class="header-wrapper">
+      <div class="header-content">
+        <span class="icon is-medium header-logo">
+          <i class="fas fa-temperature-high"></i>
+        </span>
+        <div class="header-text">
+          <h1 class="title is-5">Temperature Gauge Sensors</h1>
+          <p class="subtitle is-7">Monitor room temperature</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button 
+          class="button is-light accessibility-button"
+          (click)="toggleAccessibilityModal()"
+          aria-label="Open accessibility settings"
+          title="Accessibility settings">
+          <span class="icon">
+            <i class="fas fa-universal-access"></i>
+          </span>
+        </button>
+        <button 
+          class="button is-light refresh-all-button"
+          (click)="refreshAllSensors()"
+          [disabled]="isRefreshingAll"
+          [attr.aria-label]="isRefreshingAll ? 'Refreshing all sensors...' : 'Refresh all sensors'"
+          title="Refresh all sensors data">
+          <span class="icon" [class.is-spinning]="isRefreshingAll">
+            <i class="fas fa-sync-alt"></i>
+          </span>
+          <span>{{ isRefreshingAll ? 'Refreshing...' : 'Refresh All' }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="header-animation" *ngIf="showHeaderAnimation" [@fadeOut]>
+  <svg class="waves" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:#3273dc;stop-opacity:0.8">
+          <animate attributeName="stop-color" values="#3273dc;#5a9fd4;#3273dc" dur="3s" repeatCount="indefinite" />
+        </stop>
+        <stop offset="50%" style="stop-color:#5a9fd4;stop-opacity:0.6">
+          <animate attributeName="stop-color" values="#5a9fd4;#3273dc;#5a9fd4" dur="3s" repeatCount="indefinite" />
+        </stop>
+        <stop offset="100%" style="stop-color:#3273dc;stop-opacity:0.8">
+          <animate attributeName="stop-color" values="#3273dc;#5a9fd4;#3273dc" dur="3s" repeatCount="indefinite" />
+        </stop>
+      </linearGradient>
+    </defs>
+    <path fill="url(#waveGradient)" fill-opacity="1" 
+      d="M0,160L48,144C96,128,192,96,288,101.3C384,107,480,149,576,154.7C672,160,768,128,864,122.7C960,117,1056,139,1152,138.7C1248,139,1344,117,1392,106.7L1440,96L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z">
+      <animate attributeName="d" 
+        dur="5s" 
+        repeatCount="indefinite"
+        values="
+          M0,160L48,144C96,128,192,96,288,101.3C384,107,480,149,576,154.7C672,160,768,128,864,122.7C960,117,1056,139,1152,138.7C1248,139,1344,117,1392,106.7L1440,96L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z;
+          M0,96L48,112C96,128,192,160,288,154.7C384,149,480,107,576,101.3C672,96,768,128,864,133.3C960,139,1056,117,1152,117.3C1248,117,1344,139,1392,149.3L1440,160L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z;
+          M0,160L48,144C96,128,192,96,288,101.3C384,107,480,149,576,154.7C672,160,768,128,864,122.7C960,117,1056,139,1152,138.7C1248,139,1344,117,1392,106.7L1440,96L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z
+        " />
+    </path>
+  </svg>
+</div>
+
+<section class="section">
+  <div class="container">
+    <!-- Main Display Area for Selected Gauges -->
+    <div class="box mb-6" *ngIf="selectedGauges.length > 0">
+      <div class="level mb-4">
+        <div class="level-left">
+          <div class="level-item">
+            <h2 class="title is-4">
+              <span class="icon-text">
+                <span class="icon has-text-warning" [class.blink-star]="blinkStar">
+                  <i class="fas fa-star"></i>
+                </span>
+                <span>Selected Gauges ({{ selectedGauges.length }})</span>
+              </span>
+            </h2>
+          </div>
+        </div>
+        <div class="level-right">
+          <div class="level-item">
+            <button 
+              class="button is-danger is-light clear-favorites-btn" 
+              (click)="clearAllSelections()"
+              aria-label="Clear all favorite gauges"
+              title="Remove all gauges from favorites">
+              <span class="icon is-small">
+                <i class="fas fa-eraser"></i>
+              </span>
+              <span>Clear Favorites</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="columns is-multiline is-centered" [class.has-expanded-gauge]="expandedGaugeId">
+        <div class="column" 
+             [ngClass]="{
+               'is-half': selectedGauges.length === 1,
+               'is-one-third': selectedGauges.length === 2,
+               'is-one-quarter': selectedGauges.length >= 3
+             }"
+             [class.expanded-gauge]="isExpanded(gauge.id)"
+             [class.hidden-gauge]="expandedGaugeId && !isExpanded(gauge.id)"
+             *ngFor="let gauge of selectedGauges; let i = index; trackBy: trackByGaugeId">
+          <ng-container *ngIf="isExpanded(gauge.id)">
+            <div class="expanded-datetime">
+              <div class="datetime-date">{{ currentDateTime | date:'EEEE, MMMM d, y' }}</div>
+              <div class="datetime-time">{{ currentDateTime | date:'HH:mm:ss' }}</div>
+            </div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+          </ng-container>
+          <div class="box gauge-box-wrapper">
+            <app-temperature-gauge
+              dataSource="none"
+              [minTemp]="gauge.minTemp"
+              [maxTemp]="gauge.maxTemp"
+              [currentTemp]="gauge.currentTemp"
+              [humidity]="gauge.humidity"
+              [label]="gauge.label"
+              [status]="gauge.status"
+              [lastUpdated]="gauge.lastUpdated"
+              [gaugeId]="gauge.id"
+              [selectable]="false"
+              [showReorder]="true"
+              [showActionButtons]="true"
+              [isExpanded]="isExpanded(gauge.id)"
+              [canMoveLeft]="i > 0"
+              [canMoveRight]="i < selectedGauges.length - 1"
+              [unit]="globalUnit"
+              [isDarkMode]="globalIsDarkMode"
+              (unitChange)="onUnitChange($event)"
+              (themeChange)="onThemeChange($event)"
+              (refreshRequest)="onRefreshRequest($event)"
+              (moveLeft)="moveGaugeLeft(i)"
+              (moveRight)="moveGaugeRight(i)"
+              (removeFromFavorites)="removeFromFavorites(gauge.id)"
+              (toggleExpand)="toggleExpand(gauge.id)"
+            ></app-temperature-gauge>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Gauges with Selection -->
+    <div class="box">
+      <div class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <h2 class="title is-4">Choose Available Gauges</h2>
+          </div>
+        </div>
+        <div class="level-right">
+          <div class="level-item">
+            <button 
+              *ngIf="showArray"
+              class="button is-small is-info mr-2"
+              [class.is-outlined]="viewMode === 'all'"
+              (click)="toggleViewMode()"
+              [attr.aria-label]="'Switch to ' + (viewMode === 'categorized' ? 'all' : 'categorized') + ' view'"
+              title="Toggle categorized/all view">
+              <span class="icon is-small">
+                <i class="fas" [ngClass]="viewMode === 'categorized' ? 'fa-layer-group' : 'fa-list'"></i>
+              </span>
+              <span>{{ viewMode === 'categorized' ? 'Categorized' : 'All' }}</span>
+            </button>
+          </div>
+          <div class="level-item">
+            <button 
+              class="button is-info is-outlined" 
+              (click)="toggleView()"
+              [attr.aria-label]="(showArray ? 'Hide' : 'Show') + ' all gauge list'"
+              [attr.aria-expanded]="showArray"
+              title="Toggle gauge list visibility">
+              <span class="icon is-small">
+                <i class="fas" [ngClass]="showArray ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+              </span>
+              <span>{{ showArray ? 'Hide' : 'Show' }} All Gauges</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="showArray">
+        <!-- Categorized View -->
+        <div *ngIf="viewMode === 'categorized'">
+          <!-- Active Gauges -->
+          <div *ngIf="activeGauges.length > 0" class="gauge-group">
+          <h3 
+            class="subtitle is-5 has-text-success mt-4 mb-3 is-clickable" 
+            (click)="toggleActiveGauges()"
+            [attr.aria-expanded]="showActiveGauges">
+            <span class="icon-text">
+              <span class="icon">
+                <i class="fas fa-check-circle"></i>
+              </span>
+              <span>Active Sensors ({{ activeGauges.length }})</span>
+              <span class="icon is-pulled-right">
+                <i class="fas" [ngClass]="showActiveGauges ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+              </span>
+            </span>
+          </h3>
+          <div class="columns is-multiline" *ngIf="showActiveGauges">
+            <div class="column is-one-third" *ngFor="let gauge of activeGauges; trackBy: trackByGaugeId">
+              <div class="box">
+                <app-temperature-gauge
+                  dataSource="none"
+                  [minTemp]="gauge.minTemp"
+                  [maxTemp]="gauge.maxTemp"
+                  [currentTemp]="gauge.currentTemp"
+                  [humidity]="gauge.humidity"
+                  [label]="gauge.label"
+                  [status]="gauge.status"
+                  [lastUpdated]="gauge.lastUpdated"
+                  [gaugeId]="gauge.id"
+                  [selectable]="true"
+                  [isSelected]="gauge.isSelected"
+                  [unit]="globalUnit"
+                  [isDarkMode]="globalIsDarkMode"
+                  (selectionChange)="onGaugeSelectionChange(gauge, $event)"
+                  (unitChange)="onUnitChange($event)"
+                  (themeChange)="onThemeChange($event)"
+                  (refreshRequest)="onRefreshRequest($event)"
+                ></app-temperature-gauge>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Outdated Gauges -->
+        <div *ngIf="outdatedGauges.length > 0" class="gauge-group">
+          <h3 
+            class="subtitle is-5 has-text-warning mt-4 mb-3 is-clickable" 
+            (click)="toggleOutdatedGauges()"
+            [attr.aria-expanded]="showOutdatedGauges">
+            <span class="icon-text">
+              <span class="icon">
+                <i class="fas fa-exclamation-triangle"></i>
+              </span>
+              <span>Outdated Data ({{ outdatedGauges.length }})</span>
+              <span class="icon is-pulled-right">
+                <i class="fas" [ngClass]="showOutdatedGauges ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+              </span>
+            </span>
+          </h3>
+          <div class="columns is-multiline" *ngIf="showOutdatedGauges">
+            <div class="column is-one-third" *ngFor="let gauge of outdatedGauges; trackBy: trackByGaugeId">
+              <div class="box">
+                <app-temperature-gauge
+                  dataSource="none"
+                  [minTemp]="gauge.minTemp"
+                  [maxTemp]="gauge.maxTemp"
+                  [currentTemp]="gauge.currentTemp"
+                  [humidity]="gauge.humidity"
+                  [label]="gauge.label"
+                  [status]="gauge.status"
+                  [lastUpdated]="gauge.lastUpdated"
+                  [gaugeId]="gauge.id"
+                  [selectable]="true"
+                  [isSelected]="gauge.isSelected"
+                  [unit]="globalUnit"
+                  [isDarkMode]="globalIsDarkMode"
+                  (selectionChange)="onGaugeSelectionChange(gauge, $event)"
+                  (unitChange)="onUnitChange($event)"
+                  (themeChange)="onThemeChange($event)"
+                  (refreshRequest)="onRefreshRequest($event)"
+                ></app-temperature-gauge>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inactive Gauges -->
+        <div *ngIf="inactiveGauges.length > 0" class="gauge-group">
+          <h3 
+            class="subtitle is-5 has-text-grey mt-4 mb-3 is-clickable" 
+            (click)="toggleInactiveGauges()"
+            [attr.aria-expanded]="showInactiveGauges">
+            <span class="icon-text">
+              <span class="icon">
+                <i class="fas fa-power-off"></i>
+              </span>
+              <span>Offline Sensors ({{ inactiveGauges.length }})</span>
+              <span class="icon is-pulled-right">
+                <i class="fas" [ngClass]="showInactiveGauges ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+              </span>
+            </span>
+          </h3>
+          <div class="columns is-multiline" *ngIf="showInactiveGauges">
+            <div class="column is-one-third" *ngFor="let gauge of inactiveGauges; trackBy: trackByGaugeId">
+              <div class="box">
+                <app-temperature-gauge
+                  dataSource="none"
+                  [minTemp]="gauge.minTemp"
+                  [maxTemp]="gauge.maxTemp"
+                  [currentTemp]="gauge.currentTemp"
+                  [humidity]="gauge.humidity"
+                  [label]="gauge.label"
+                  [status]="gauge.status"
+                  [lastUpdated]="gauge.lastUpdated"
+                  [gaugeId]="gauge.id"
+                  [selectable]="true"
+                  [isSelected]="gauge.isSelected"
+                  [unit]="globalUnit"
+                  [isDarkMode]="globalIsDarkMode"
+                  (selectionChange)="onGaugeSelectionChange(gauge, $event)"
+                  (unitChange)="onUnitChange($event)"
+                  (themeChange)="onThemeChange($event)"
+                  (refreshRequest)="onRefreshRequest($event)"
+                ></app-temperature-gauge>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- All View (Uncategorized) -->
+      <div *ngIf="viewMode === 'all'">
+        <div class="columns is-multiline">
+          <div class="column is-one-third" *ngFor="let gauge of gauges; trackBy: trackByGaugeId">
+            <div class="box">
+              <app-temperature-gauge
+                dataSource="none"
+                [minTemp]="gauge.minTemp"
+                [maxTemp]="gauge.maxTemp"
+                [currentTemp]="gauge.currentTemp"
+                [humidity]="gauge.humidity"
+                [label]="gauge.label"
+                [status]="gauge.status"
+                [lastUpdated]="gauge.lastUpdated"
+                [gaugeId]="gauge.id"
+                [selectable]="true"
+                [isSelected]="gauge.isSelected"
+                [unit]="globalUnit"
+                [isDarkMode]="globalIsDarkMode"
+                (selectionChange)="onGaugeSelectionChange(gauge, $event)"
+                (unitChange)="onUnitChange($event)"
+                (themeChange)="onThemeChange($event)"
+                (refreshRequest)="onRefreshRequest($event)"
+              ></app-temperature-gauge>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+      
+    <p class="has-text-grey" *ngIf="!showArray">Click "Show All Gauges" to view and select multiple temperature gauges</p>
+    </div>
+  </div>
+</section>
+
+<button 
+  *ngIf="showScrollTop" 
+  class="scroll-to-top" 
+  (click)="scrollToTop()"
+  title="Scroll to top"
+  aria-label="Scroll to top of page">
+  <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- Offline Modal Overlay -->
+<app-offline-modal [isOffline]="isOffline"></app-offline-modal>
+
+<!-- Accessibility Modal -->
+<app-accessibility-modal 
+  *ngIf="showAccessibilityModal"
+  (close)="closeAccessibilityModal()">
+</app-accessibility-modal>
+
+<!-- Toast Notifications -->
+<app-toast></app-toast>

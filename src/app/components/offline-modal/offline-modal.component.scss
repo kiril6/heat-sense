@@ -1,0 +1,122 @@
+.offline-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-bg-modal);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.offline-content {
+  background: var(--color-gauge-background);
+  border-radius: 16px;
+  padding: 3rem 2.5rem;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 20px 60px var(--shadow-large);
+  animation: slideUp 0.4s ease-out;
+  position: relative;
+}
+
+.offline-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, var(--color-error) 0%, var(--color-error-light) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: white;
+  box-shadow: 0 8px 24px var(--shadow-error);
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    width: 70%;
+    height: 3px;
+    background: white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    border-radius: 2px;
+  }
+}
+
+.offline-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text-base);
+  margin-bottom: 0.75rem;
+}
+
+.offline-message {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 0;
+}
+
+.offline-pulse {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  background: var(--color-error);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(-50%) scale(1.5);
+    opacity: 0.5;
+  }
+}
+
+:host-context(html[data-theme='dark']) .offline-content {
+  background: var(--color-bg-light);
+  box-shadow: 0 20px 60px var(--shadow-large);
+}
+
+:host-context(html[data-theme='dark']) .offline-title {
+  color: var(--color-text-base);
+}
+
+:host-context(html[data-theme='dark']) .offline-message {
+  color: var(--color-text-secondary);
+}
