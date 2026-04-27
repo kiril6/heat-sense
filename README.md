@@ -7,6 +7,8 @@ A real-time temperature sensor monitoring dashboard built with Angular 18, featu
 ![Tests](https://img.shields.io/badge/Tests-132%20passing-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
+🔴 **[Live Demo](https://kiril6.github.io/heat-sense/)**
+
 ## 📋 Table of Contents
 
 - [Features](#features)
